@@ -1,0 +1,196 @@
+.record-page {
+    display: flex;
+    
+    height: 100vh; /* Make the full height available for the content */
+
+}
+
+.content {
+    margin-left: 250px; /* Same width as the sidebar */
+    margin-top: 90px;
+    padding: 20px;
+    width: calc(100% - 250px); /* Adjust width to account for sidebar */
+    height: calc(100% - 60px);
+
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    position: fixed;
+    top: 0;
+    left: 250px; /* Start from the end of the sidebar */
+    right: 0;
+    /* z-index: 1000; */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.actions .flex {
+    display: flex;
+    justify-content: flex-end;
+    
+}
+
+.actions .btn {
+    margin-left: 10px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(350px, 1fr)); 
+    gap: 10px; /* Reduced gap */
+}
+
+.grid-item {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    box-sizing: border-box;
+}
+.grid-item .text-xl {
+    font-size: 1rem; /* Lower the font size */
+}
+
+.grid-item .text-gray-700 {
+    font-size: 0.875rem; /* Lower the font size */
+}
+
+.grid-item .btn {
+    font-size: 0.875rem; /* Lower the font size for buttons */
+}
+
+.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%; /* Ensure it does not cause overflow */
+    box-sizing: border-box;
+}
+
+
+
+/* Navbar styling */
+
+.form-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    width: auto; /* Adjust width to fit content */
+    margin-left: auto; /* Leave space on the left side */
+   
+}
+
+
+.navbar-container {
+    display: flex;
+    /*justify-content: flex-end; /* Pushes the navbar to the right */
+    width: 100%;
+    padding: 8px 8px;
+    justify-content: space-between; /* Adjust to space-between to create space between form and navbar */
+    background-color: #333; /* Example background color */
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+    width: auto; /* Adjust width to fit content */
+    margin-left: auto; /* Leave space on the left side */
+   
+   
+}
+
+.navbar-form {
+    display: flex;
+    align-items: center;
+    margin-right: auto; /* Ensure the form is aligned to the left */
+    /* padding-left: 8px; */
+}
+
+
+
+.navbar .nav-item {
+    font-size: 0.875rem; /* Lower the font size */
+    padding: 8px 12px; /* Adjust padding as needed */
+    color: white; /* Example text color */
+}
+
+.navbar .nav-item a {
+    color: inherit; /* Ensure link color matches text color */
+    text-decoration: none;
+}
+
+.navbar .nav-item a:hover {
+    text-decoration: underline; /* Example hover effect */
+}
+
+.navbar-button {
+    padding: 4px 8px; /* Adjust padding */
+    margin-right: 4px; /* Adjust margin */
+    height: 24px; /* Adjust height */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 24px; /* Adjust line height */
+    font-size: 0.75rem; /* Adjust font size */
+    background-color: #e2e8f0; /* Example background color */
+    color: #2d3748; /* Example text color */
+    border-radius: 4px; /* Adjust border radius */
+}
+
+.navbar-button svg {
+    height: 16px; /* Adjust SVG height */
+    width: 16px; /* Adjust SVG width */
+   
+}
+
+.navbar-button span {
+    font-size: 0.75rem; /* Adjust font size */
+}
+.thin-button {
+    padding: 2px 4px; /* Reduce padding to make the button thinner */
+    margin-right: 2px; /* Reduce margin to decrease gap */
+}
+
+.fixed-buttons-container {
+    position: fixed;
+    margin-left: 250px;
+    top: 0;
+    left: 0;
+    width: calc(100% - 250px); /* Adjust width to account for the sidebar */
+    padding: 4px;
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    z-index: 1000;
+    background-color: #1e436a; /* Blue background */
+    margin-top: 55px;
+}
+
+#columns-right-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Align buttons to the right */
+    width: auto; /* Ensure it doesn't stretch */
+     /* Add space between buttons */
+}
+
+.text-white {
+    color: white;
+}
+
+
+.sidebar-collapse .btn {
+    background: none;
+    transform: scale(1.1); /* Scale up by 10% */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 4px;
+    margin-left: -2px;
+}
