@@ -4,9 +4,7 @@ import dotenv from "dotenv";
 const connect = async () => {
     try {
         console.log("Connecting to database...");
-        const conn = await mongoose.connect(
-            "mongodb+srv://testuser:test123@contactdirectory.4uybg87.mongodb.net/contactdirectory?retryWrites=true&w=majority"
-        );
+        const conn = await mongoose.connect(process.env.MONGO_URI);
         console.log("Database connected successfully.");
         return conn;
     } catch (error) {
