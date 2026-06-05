@@ -1,275 +1,174 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { useEffect } from 'react';
-import FileUpload from '../components/uploadFile';
 import Cookies from 'js-cookie';
-// import { get } from 'http';
+import { useNavigate } from 'react-router-dom';
+import FileUpload from '../components/uploadFile';
+import Layout from '../components/Layout';
+import { RECORD_API } from '../utils/api';
+import './styles/app.css';
 
+const FIELD_GROUPS = [
+  {
+    title: 'List Info',
+    fields: [
+      { key: 'list_name', label: 'List Name' },
+      { key: 'query', label: 'Query' },
+      { key: 'email_format', label: 'Email Format' },
+    ],
+  },
+  {
+    title: 'Person Details',
+    fields: [
+      { key: 'person_first_name', label: 'First Name' },
+      { key: 'person_last_name', label: 'Last Name' },
+      { key: 'person_headline', label: 'Headline' },
+      { key: 'person_job_title', label: 'Job Title' },
+      { key: 'person_location', label: 'Location' },
+      { key: 'person_business_email', label: 'Business Email', type: 'email' },
+      { key: 'person_personal_email', label: 'Personal Email', type: 'email', required: true },
+      { key: 'person_phone', label: 'Phone', type: 'tel', required: true },
+      { key: 'person_company_name', label: 'Company Name' },
+      { key: 'person_city', label: 'City' },
+      { key: 'person_linkedin_id', label: 'LinkedIn ID' },
+      { key: 'person_linkedin_url', label: 'LinkedIn URL' },
+    ],
+  },
+  {
+    title: 'Company Details',
+    fields: [
+      { key: 'company_name', label: 'Company Name' },
+      { key: 'company_founded', label: 'Founded' },
+      { key: 'company_size', label: 'Size' },
+      { key: 'company_type', label: 'Type' },
+      { key: 'company_country', label: 'Country' },
+      { key: 'company_industry', label: 'Industry' },
+      { key: 'company_address', label: 'Address' },
+      { key: 'company_linkedin_url', label: 'LinkedIn URL' },
+      { key: 'company_linkedin_id', label: 'LinkedIn ID' },
+      { key: 'company_meta_title', label: 'Meta Title' },
+      { key: 'company_meta_description', label: 'Meta Description' },
+      { key: 'company_meta_keywords', label: 'Meta Keywords' },
+      { key: 'company_meta_phones', label: 'Meta Phones' },
+      { key: 'company_meta_emails', label: 'Meta Emails', type: 'email' },
+    ],
+  },
+];
+
+const initialFormData = FIELD_GROUPS.flatMap((g) => g.fields).reduce((acc, field) => {
+  acc[field.key] = '';
+  return acc;
+}, {});
 
 const AddRecord = () => {
-    const [listName, setListName] = useState('');
-    const [query, setQuery] = useState('');
-    const [emailFormat, setEmailFormat] = useState('');
-    const [personFirstName, setPersonFirstName] = useState('');
-    const [personLastName, setPersonLastName] = useState('');
-    const [personHeadline, setPersonHeadline] = useState('');
-    const [personJobTitle, setPersonJobTitle] = useState('');
-    const [personLocation, setPersonLocation] = useState('');
-    const [personBusinessEmail, setPersonBusinessEmail] = useState('');
-    const [personPersonalEmail, setPersonPersonalEmail] = useState('');
-    const [personPhone, setPersonPhone] = useState('');
-    const [personCompanyName, setPersonCompanyName] = useState('');
-    const [personCity, setPersonCity] = useState('');
-    const [personLinkedinId, setPersonLinkedinId] = useState('');
-    const [personLinkedinUrl, setPersonLinkedinUrl] = useState('');
-    const [companyName, setCompanyName] = useState('');
-    const [companyFounded, setCompanyFounded] = useState('');
-    const [companySize, setCompanySize] = useState('');
-    const [companyType, setCompanyType] = useState('');
-    const [companyCountry, setCompanyCountry] = useState('');
-    const [companyIndustry, setCompanyIndustry] = useState('');
-    const [companyAddress, setCompanyAddress] = useState('');
-    const [companyLinkedinUrl, setCompanyLinkedinUrl] = useState('');
-    const [companyLinkedinId, setCompanyLinkedinId] = useState('');
-    const [companyMetaTitle, setCompanyMetaTitle] = useState('');
-    const [companyMetaDescription, setCompanyMetaDescription] = useState('');
-    const [companyMetaKeywords, setCompanyMetaKeywords] = useState('');
-    const [companyMetaPhones, setCompanyMetaPhones] = useState('');
-    const [companyMetaEmails, setCompanyMetaEmails] = useState('');
+  const [formData, setFormData] = useState(initialFormData);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-    const onChangeListName = (e) => setListName(e.target.value);
-    const onChangeQuery = (e) => setQuery(e.target.value);
-    const onChangeEmailFormat = (e) => setEmailFormat(e.target.value);
-    const onChangePersonFirstName = (e) => setPersonFirstName(e.target.value);
-    const onChangePersonLastName = (e) => setPersonLastName(e.target.value);
-    const onChangePersonHeadline = (e) => setPersonHeadline(e.target.value);
-    const onChangePersonJobTitle = (e) => setPersonJobTitle(e.target.value);
-    const onChangePersonLocation = (e) => setPersonLocation(e.target.value);
-    const onChangePersonBusinessEmail = (e) => setPersonBusinessEmail(e.target.value);
-    const onChangePersonPersonalEmail = (e) => setPersonPersonalEmail(e.target.value);
-    const onChangePersonPhone = (e) => setPersonPhone(e.target.value);
-    const onChangePersonCompanyName = (e) => setPersonCompanyName(e.target.value);
-    const onChangePersonCity = (e) => setPersonCity(e.target.value);
-    const onChangePersonLinkedinId = (e) => setPersonLinkedinId(e.target.value);
-    const onChangePersonLinkedinUrl = (e) => setPersonLinkedinUrl(e.target.value);
-    const onChangeCompanyName = (e) => setCompanyName(e.target.value);
-    const onChangeCompanyFounded = (e) => setCompanyFounded(e.target.value);
-    const onChangeCompanySize = (e) => setCompanySize(e.target.value);
-    const onChangeCompanyType = (e) => setCompanyType(e.target.value);
-    const onChangeCompanyCountry = (e) => setCompanyCountry(e.target.value);
-    const onChangeCompanyIndustry = (e) => setCompanyIndustry(e.target.value);
-    const onChangeCompanyAddress = (e) => setCompanyAddress(e.target.value);
-    const onChangeCompanyLinkedinUrl = (e) => setCompanyLinkedinUrl(e.target.value);
-    const onChangeCompanyLinkedinId = (e) => setCompanyLinkedinId(e.target.value);
-    const onChangeCompanyMetaTitle = (e) => setCompanyMetaTitle(e.target.value);
-    const onChangeCompanyMetaDescription = (e) => setCompanyMetaDescription(e.target.value);
-    const onChangeCompanyMetaKeywords = (e) => setCompanyMetaKeywords(e.target.value);
-    const onChangeCompanyMetaPhones = (e) => setCompanyMetaPhones(e.target.value);
-    const onChangeCompanyMetaEmails = (e) => setCompanyMetaEmails(e.target.value);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const onHandleSubmit = async (e) => {
-        if (!personPersonalEmail || !personPhone) {
-            alert("Please fill in email or phone")
-            return;
-        }
-        e.preventDefault();
-        try {
-            const token = Cookies.get('user');
-            const response = await axios.post('http://localhost:8000/record/createRecord', {
-                user: token,
-                list_name: listName,
-                query: query,
-                email_format: emailFormat,
-                person_first_name: personFirstName,
-                person_last_name: personLastName,
-                person_headline: personHeadline,
-                person_job_title: personJobTitle,
-                person_location: personLocation,
-                person_business_email: personBusinessEmail,
-                person_personal_email: personPersonalEmail,
-                person_phone: personPhone,
-                person_company_name: personCompanyName,
-                person_city: personCity,
-                person_linkedin_id: personLinkedinId,
-                person_linkedin_url: personLinkedinUrl,
-                company_name: companyName,
-                company_founded: companyFounded,
-                company_size: companySize,
-                company_type: companyType,
-                company_country: companyCountry,
-                company_industry: companyIndustry,
-                company_address: companyAddress,
-                company_linkedin_url: companyLinkedinUrl,
-                company_linkedin_id: companyLinkedinId,
-                company_meta_title: companyMetaTitle,
-                company_meta_description: companyMetaDescription,
-                company_meta_keywords: companyMetaKeywords,
-                company_meta_phones: companyMetaPhones,
-                company_meta_emails: companyMetaEmails,
-            });
-            console.log(response.data)
-            alert("Added")
-        } catch (error) {
-            console.log(error)
-        }
+  const onHandleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.person_personal_email && !formData.person_phone) {
+      setIsError(true);
+      setMessage('Please provide at least an email or phone number');
+      return;
     }
 
-    return (
-        <div className="container mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6 text-center">Add Record</h1>
-            <form onSubmit={onHandleSubmit}>
-                <label>
-                    List Name:
-                    <input type="text" name="listName" value={listName} onChange={onChangeListName} />
-                </label>
-                <br /><br />
-                <label>
-                    Query:
-                    <input type="text" name="query" value={query} onChange={onChangeQuery} />
-                </label>
-                <br /><br />
-                <label>
-                    Email Format:
-                    <input type="text" name="emailFormat" value={emailFormat} onChange={onChangeEmailFormat} />
-                </label>
-                <br /><br />
-                <label>
-                    Person First Name:
-                    <input type="text" name="personFirstName" value={personFirstName} onChange={onChangePersonFirstName} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Last Name:
-                    <input type="text" name="personLastName" value={personLastName} onChange={onChangePersonLastName} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Headline:
-                    <input type="text" name="personHeadline" value={personHeadline} onChange={onChangePersonHeadline} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Job Title:
-                    <input type="text" name="personJobTitle" value={personJobTitle} onChange={onChangePersonJobTitle} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Location:
-                    <input type="text" name="personLocation" value={personLocation} onChange={onChangePersonLocation} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Business Email:
-                    <input type="email" name="personBusinessEmail" value={personBusinessEmail} onChange={onChangePersonBusinessEmail} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Personal Email:
-                    <input type="email" name="personPersonalEmail" value={personPersonalEmail} onChange={onChangePersonPersonalEmail} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Phone:
-                    <input type="tel" name="personPhone" value={personPhone} onChange={onChangePersonPhone} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Company Name:
-                    <input type="text" name="personCompanyName" value={personCompanyName} onChange={onChangePersonCompanyName} />
-                </label>
-                <br /><br />
-                <label>
-                    Person City:
-                    <input type="text" name="personCity" value={personCity} onChange={onChangePersonCity} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Linkedin ID:
-                    <input type="text" name="personLinkedinId" value={personLinkedinId} onChange={onChangePersonLinkedinId} />
-                </label>
-                <br /><br />
-                <label>
-                    Person Linkedin URL:
-                    <input type="text" name="personLinkedinUrl" value={personLinkedinUrl} onChange={onChangePersonLinkedinUrl} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Name:
-                    <input type="text" name="companyName" value={companyName} onChange={onChangeCompanyName} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Founded:
-                    <input type="text" name="companyFounded" value={companyFounded} onChange={onChangeCompanyFounded} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Size:
-                    <input type="text" name="companySize" value={companySize} onChange={onChangeCompanySize} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Type:
-                    <input type="text" name="companyType" value={companyType} onChange={onChangeCompanyType} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Country:
-                    <input type="text" name="companyCountry" value={companyCountry} onChange={onChangeCompanyCountry} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Industry:
-                    <input type="text" name="companyIndustry" value={companyIndustry} onChange={onChangeCompanyIndustry} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Address:
-                    <input type="text" name="companyAddress" value={companyAddress} onChange={onChangeCompanyAddress} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Linkedin URL:
-                    <input type="text" name="companyLinkedinUrl" value={companyLinkedinUrl} onChange={onChangeCompanyLinkedinUrl} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Linkedin ID:
-                    <input type="text" name="companyLinkedinId" value={companyLinkedinId} onChange={onChangeCompanyLinkedinId} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Meta Title:
-                    <input type="text" name="companyMetaTitle" value={companyMetaTitle} onChange={onChangeCompanyMetaTitle} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Meta Description:
-                    <input type="text" name="companyMetaDescription" value={companyMetaDescription} onChange={onChangeCompanyMetaDescription} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Meta Keywords:
-                    <input type="text" name="companyMetaKeywords" value={companyMetaKeywords} onChange={onChangeCompanyMetaKeywords} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Meta Phones:
-                    <input type="text" name="companyMetaPhones" value={companyMetaPhones} onChange={onChangeCompanyMetaPhones} />
-                </label>
-                <br /><br />
-                <label>
-                    Company Meta Emails:
-                    <input type="email" name="companyMetaEmails" value={companyMetaEmails} onChange={onChangeCompanyMetaEmails} />
-                </label>
-                <br /><br />
-                <button type="submit">Submit</button>
-                <br /><br />
-            </form>
-            <div>Attach a file instead:</div>
-            <FileUpload />
+    setIsSubmitting(true);
+    setMessage('');
+    try {
+      const token = Cookies.get('user');
+      await axios.post(`${RECORD_API}/createRecord`, {
+        user: token,
+        formData,
+      });
+      setIsError(false);
+      setMessage('Record added successfully!');
+      setFormData(initialFormData);
+      setTimeout(() => navigate('/records'), 1500);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.response?.data?.message || 'Failed to add record');
+    }
+    setIsSubmitting(false);
+  };
+
+  return (
+    <Layout>
+    <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Add Record</h1>
+            <p className="text-gray-500 mt-1">Create a new contact entry</p>
+          </div>
+          <button
+            onClick={() => navigate('/records')}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            ← Back to Records
+          </button>
         </div>
-    )
-}
+
+        <form onSubmit={onHandleSubmit} className="bg-white rounded-xl shadow-md p-6 space-y-8" style={{ marginBottom: 24 }}>
+          {FIELD_GROUPS.map((group) => (
+            <div key={group.title}>
+              <h2 className="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b">{group.title}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {group.fields.map((field) => (
+                  <div key={field.key}>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">
+                      {field.label}
+                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    <input
+                      type={field.type || 'text'}
+                      name={field.key}
+                      value={formData[field.key]}
+                      onChange={handleChange}
+                      required={field.required}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {message && (
+            <p className={`text-sm text-center ${isError ? 'text-red-500' : 'text-green-600'}`}>
+              {message}
+            </p>
+          )}
+
+          <div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={() => navigate('/records')}
+              className="px-5 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg text-sm font-medium"
+            >
+              {isSubmitting ? 'Saving...' : 'Save Record'}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-8 bg-white rounded-xl shadow-md p-6">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Or import from CSV</h2>
+          <FileUpload />
+        </div>
+    </div>
+    </Layout>
+  );
+};
 
 export default AddRecord;

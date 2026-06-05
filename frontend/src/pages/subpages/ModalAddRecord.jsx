@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import '../styles/ModalAddRecord.css'; // Assuming you save the CSS in ModalAddRecord.css
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { RECORD_API } from '../../utils/api';
 
-const ModalAddRecord = ({ show, onClose }) => {
+const ModalAddRecord = ({ show, onClose, onSuccess }) => {
 	const [formData, setFormData] = useState({
 		list_name: "",
 		query: "",
@@ -54,7 +55,7 @@ const ModalAddRecord = ({ show, onClose }) => {
 		e.preventDefault();
 		try {
 			const token = Cookies.get('user');
-			const response = await axios.post('http://localhost:8000/record/createRecord', {
+			await axios.post(`${RECORD_API}/createRecord`, {
 				user: token,
 				formData
 			});
@@ -90,10 +91,12 @@ const ModalAddRecord = ({ show, onClose }) => {
 				company_meta_emails: ""
 			});
 
-			alert("Added")
+			alert("Record added successfully");
+			if (onSuccess) onSuccess();
 			onClose();
 		} catch (error) {
-			console.log(error)
+			const msg = error.response?.data?.message || 'Failed to add record';
+			alert(msg);
 		}
 	}
 

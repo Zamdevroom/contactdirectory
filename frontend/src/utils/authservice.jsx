@@ -1,14 +1,10 @@
-//This file is used by auth context
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { USER_API } from './api';
 
-const API_URL = 'http://localhost:8000/user';
-
-//Login
 const login = async (username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/signin`, {
+    const response = await axios.post(`${USER_API}/signin`, {
       username,
       password,
     });
@@ -16,20 +12,20 @@ const login = async (username, password) => {
       Cookies.set('user', response.data.userID);
       return response.data;
     }
+    return null;
   } catch (error) {
     console.error('Error signing in:', error);
+    return null;
   }
 };
 
-//Logout
 const logout = () => {
   Cookies.remove('user');
 };
 
-//Signup
 const signup = async (firstname, lastname, username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, {
+    const response = await axios.post(`${USER_API}/signup`, {
       firstname,
       lastname,
       username,
@@ -38,25 +34,29 @@ const signup = async (firstname, lastname, username, password) => {
     return response.data;
   } catch (error) {
     console.error('Error signing up:', error);
+    throw error;
   }
 };
 
-//Get current user                --------- to be implemented
 const getCurrentUser = async () => {
-
   const token = Cookies.get('user');
 
-  if (token) {
-    const response = await axios.get(`${API_URL}/current`, {
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const response = await axios.get(`${USER_API}/current`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `${token}`,
       },
     });
-    console.log('Current User:', response.data)
     return response.data;
+  } catch (error) {
+    Cookies.remove('user');
+    return null;
   }
-  return null;
 };
 
 export default {

@@ -1,78 +1,71 @@
-import express from 'express';
 import csvParser from 'csv-parser';
 import fs from 'fs';
 import Data from '../models/Data.js';
 import _ from 'lodash';
 
-
 const uploadFile = (req, res) => {
-  let results = [];
+  const results = [];
   const filePath = req.file.path;
   const user = req.body.user;
-  console.log(req.body.selectedcolumns);
   let selectedcolumns = req.body.selectedcolumns;
-  let newselectedcolumns = selectedcolumns.split(',');
-  newselectedcolumns.push('phone_number');
-  newselectedcolumns.push('email_address');
+
+  if (typeof selectedcolumns === 'string') {
+    selectedcolumns = selectedcolumns.split(',').filter(Boolean);
+  }
+
+  const newselectedcolumns = [...selectedcolumns];
+  if (!newselectedcolumns.includes('person_phone')) {
+    newselectedcolumns.push('person_phone');
+  }
+  if (!newselectedcolumns.includes('person_personal_email')) {
+    newselectedcolumns.push('person_personal_email');
+  }
 
   fs.createReadStream(filePath)
     .pipe(csvParser())
     .on('data', (data) => results.push(data))
     .on('end', async () => {
       try {
-        results = results.map((result) => _.pick(result, newselectedcolumns));
-        console.log(results);
-        for (let i = 0; i < results.length; i++) {
-          if (results[i].phone_number === "" && results[i].email_address === "") { //dont add records with no email and phone
-            continue;
+        const pickedResults = results.map((result) => _.pick(result, newselectedcolumns));
 
+        for (let i = 0; i < pickedResults.length; i++) {
+          const row = pickedResults[i];
+
+          if (!row.person_phone && !row.person_personal_email) {
+            continue;
           }
 
-          const exisitngUser = await Data.findOne({ user: user, phone_number: results[i].phone_number }); //check existing using phone number
-          if (exisitngUser && results[i].phone_number !== "") {
+          let existingRecord = null;
 
+          if (row.person_phone) {
+            existingRecord = await Data.findOne({ user, person_phone: row.person_phone });
+          }
+
+          if (!existingRecord && row.person_personal_email) {
+            existingRecord = await Data.findOne({ user, person_personal_email: row.person_personal_email });
+          }
+
+          if (existingRecord) {
             let change = false;
-            for (let j = 0; j < selectedcolumns.length; j++) {
-
-              if (exisitngUser[selectedcolumns[j]] === "" && results[i][selectedcolumns[j]] !== "") {
-                exisitngUser[selectedcolumns[j]] = results[i][selectedcolumns[j]];
+            for (const column of selectedcolumns) {
+              if (!existingRecord[column] && row[column]) {
+                existingRecord[column] = row[column];
                 change = true;
               }
-
             }
-
-
             if (change) {
-              await exisitngUser.save();
+              await existingRecord.save();
             }
             continue;
-
           }
-          else {
-            const exisitngUser2 = await Data.findOne({ user: user, email_address: results[i].email_address }); //check existing using email
-            if (exisitngUser2 && results[i].email_address !== "") {
 
-              let change = false;
-              for (let j = 0; j < selectedcolumns.length; j++) {
-
-                if (exisitngUser2[selectedcolumns[j]] === "" && results[i][selectedcolumns[j]] !== "") {
-                  exisitngUser2[selectedcolumns[j]] = results[i][selectedcolumns[j]];
-                  change = true;
-                }
-
-              }
-
-              if (change) {
-                await exisitngUser2.save();
-              }
-              continue;
-            }
-            results[i].user = user;
-            await Data.insertMany(results[i]);
-          }
+          row.user = user;
+          await Data.create(row);
         }
+
         res.status(200).json({ message: 'Data successfully saved to the database' });
       } catch (error) {
+        console.error('CSV upload error:', error);
         res.status(500).json({ message: 'Error saving data to the database' });
       } finally {
         fs.unlinkSync(filePath);

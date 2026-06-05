@@ -3,10 +3,9 @@ import '../styles/Modal.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useState } from 'react';
-import { useEffect } from 'react';
-import { set } from 'mongoose';
+import { RECORD_API } from '../../utils/api';
 
-const Import = ({ show, onClose }) => {
+const Import = ({ show, onClose, onSuccess }) => {
 	const [file, setFile] = useState(null);
 	const [message, setMessage] = useState('');
 	const [columns, setColumns] = useState([]);
@@ -26,14 +25,15 @@ const Import = ({ show, onClose }) => {
 		formData.append('user', user);
 		formData.append('selectedcolumns', selectedColumns);
 		try {
-			const response = await axios.post('http://localhost:8000/record/uploadFile', formData, {
+			await axios.post(`${RECORD_API}/uploadFile`, formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
 			});
 			setShowColumns(false);
 			setShowUpload(true);
-			alert("Adding records to database")
+			alert("Records added to database");
+			if (onSuccess) onSuccess();
 			// setShowUpload(true);
 
 		}
@@ -70,7 +70,7 @@ const Import = ({ show, onClose }) => {
 		formData.append('user', user);
 
 		try {
-			const res = await axios.post('http://localhost:8000/record/checkFile', formData, {
+			const res = await axios.post(`${RECORD_API}/checkFile`, formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
