@@ -30,9 +30,20 @@
 //   process.exit(1); // Exit the process with failure
 // });
 
+import path from "path";
+import { fileURLToPath } from "url";
 
-import { config } from "dotenv";
-config({ path: "./config.env" });
+import dns from "node:dns";
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
+import dotenv from "dotenv";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, ".env") });
+
+console.log("ENV Loaded:", !!process.env.MONGO_URI);
 import http from "http";
 import { app } from "./app.js";
 import connect from "./utils/mongodb.js";
@@ -41,8 +52,6 @@ import initializeGridFSBucket from "./utils/gridfsBucket.js";
 // Create HTTP server
 const server = http.createServer(app);
 
-// Load environment variables
-console.log("Connecting to MongoDB:", process.env.MONGO_URI);
 
 // MongoDB connection and GridFSBucket initialization
 connect().then(async (db) => {

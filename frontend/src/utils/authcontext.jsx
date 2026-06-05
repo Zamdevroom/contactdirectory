@@ -1,5 +1,3 @@
-//This is the authcontext which is used to provide the user details to the entire application
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import authservice from './authservice';
 
@@ -7,18 +5,25 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await authservice.getCurrentUser();
       setUser(currentUser);
+      setLoading(false);
     };
     fetchUser();
   }, []);
 
   const login = async (username, password) => {
     const response = await authservice.login(username, password);
-    setUser(response);
+    if (response) {
+      const currentUser = await authservice.getCurrentUser();
+      setUser(currentUser);
+      return true;
+    }
+    return false;
   };
 
   const logout = () => {
@@ -33,11 +38,11 @@ export const AuthProvider = ({ children }) => {
       username,
       password
     );
-    setUser(response);
+    return response;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, loading }}>
       {children}
     </AuthContext.Provider>
   );

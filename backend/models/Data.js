@@ -5,179 +5,40 @@ const dataSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    full_name: {
-        type: String,
-        
-    },
-    first_name: {
-        type: String,
-        
-    },
-    last_name: {
-        type: String,
-        
-    },
-    middle_name: {
-        type: String,
-        
-    },
-    suffix: {
-        type: String,
-        
-    },
-    title: {
-        type: String,
-        
-    },
-    nickname: {
-        type: String,
-        
-    },
-    gender: {
-        type: String,
-        
-    },
-    email_address: {
-        type: String,
-        
-    },
-    phone_number: {
-        type: String,
-        
-    },
-    address: {
-        type: String,
-        
-    },
-    city: {
-        type: String,
-        
-    },
-    state: {
-        type: String,
-        
-    },
-    country: {
-        type: String,
-        
-    },
-    zip_code: {
-        type: String,
-        
-    },
-    linkedin: {
-        type: String,
-        
-    },
-    website: {
-        type: String,
-        
-    },
-    social_media: {
-        type: String,
-        
-    },
-    company_name: {
-        type: String,
-        
-    },
-    job_title: {
-        type: String,
-        
-    },
-    department: {
-        type: String,
-        
-    },
-    industry: {
-        type: String,
-        
-    },
-    company_address: {
-        type: String,
-        
-    },
-    company_city: {
-        type: String,
-        
-    },
-    company_state: {
-        type: String,
-        
-    },
-    company_country: {
-        type: String,
-        
-    },
-    company_zip_code: {
-        type: String,
-        
-    },
-    company_linkedin: {
-        type: String,
-        
-    },
-    company_website: {
-        type: String,
-        
-    },
-    company_social_media: {
-        type: String,
-        
-    },
-    company_license: {
-        type: String,
-        
-    },
-    company_employees: {
-        type: String,
-        
-    },
-    notes: {
-        type: String,
-        
-    },
-    tags: {
-        type: String,
-        
-    },
-    last_contacted: {
-        type: String,
-        
-    },
-    communication_preferences: {
-        type: String,
-        
-    },
-    birthday: {
-        type: String,
-        
-    },
-    time_zone: {
-        type: String,
-        
-    },
-    // visibility_settings: {
-    //     type: String,
-        
-    // },
-    // cloud_sync: {
-    //     type: String,
-        
-    // },
-    // picture: {
-    //     type: String,
-        
-    // },
-    // favourites: {
-    //     type: String,
-        
-    // },
+    list_name: { type: String },
+    query: { type: String },
+    email_format: { type: String },
+    person_first_name: { type: String },
+    person_last_name: { type: String },
+    person_headline: { type: String },
+    person_job_title: { type: String },
+    person_location: { type: String },
+    person_business_email: { type: String },
+    person_personal_email: { type: String },
+    person_phone: { type: String },
+    person_company_name: { type: String },
+    person_city: { type: String },
+    person_linkedin_id: { type: String },
+    person_linkedin_url: { type: String },
+    company_name: { type: String },
+    company_founded: { type: String },
+    company_size: { type: String },
+    company_type: { type: String },
+    company_country: { type: String },
+    company_industry: { type: String },
+    company_address: { type: String },
+    company_linkedin_url: { type: String },
+    company_linkedin_id: { type: String },
+    company_meta_title: { type: String },
+    company_meta_description: { type: String },
+    company_meta_keywords: { type: String },
+    company_meta_phones: { type: String },
+    company_meta_emails: { type: String },
     files: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'fs.files',
-    }]
-});
+    }],
+}, { timestamps: true });
 
 const Data = mongoose.model('Data', dataSchema);
 

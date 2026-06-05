@@ -1,49 +1,54 @@
-import React from 'react';
-import '../styles/SearchCollections.css'; // Assuming you save the CSS in SearchCollections.css
+import React, { useState } from 'react';
+import '../styles/SearchCollections.css';
 
+const SearchCollections = ({ show, onClose, collections = [], onSelectCollection }) => {
+  const [search, setSearch] = useState('');
 
-const SearchCollections = ({ show, onClose }) => {
-    if (!show) {
-        return null;
-    }
-    return (
-        <div className="modal-overlay inner thin-padding">
-            <div className="modal-content">
-                <button className="modal-close" onClick={onClose}>
-                    &times;
+  if (!show) return null;
+
+  const filtered = collections.filter((c) =>
+    c.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content search-collections-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>&times;</button>
+        <div className="modal-body">
+          <h2>Search Collections</h2>
+          <p className="modal-subtitle">Filter contacts by list name</p>
+          <input
+            type="search"
+            className="search-input"
+            placeholder="Search collections..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="collections-list">
+            <button
+              className="collection-item collection-item-all"
+              onClick={() => { onSelectCollection(''); onClose(); }}
+            >
+              <span>📂</span> All Contacts
+            </button>
+            {filtered.length === 0 ? (
+              <p className="no-collections">No collections found. Add a list name to your contacts.</p>
+            ) : (
+              filtered.map((name) => (
+                <button
+                  key={name}
+                  className="collection-item"
+                  onClick={() => { onSelectCollection(name); onClose(); }}
+                >
+                  <span>📁</span> {name}
                 </button>
-                <div className="modal-body">
-                    <form className="search-wrapper search-nav mb-3">
-                        <input
-                            type="search"
-                            className="search-input"
-                            placeholder="Search for collections"
-                            autoComplete="off"
-                            name="q"
-                            value=""
-                        />
-                    </form>
-                    <div className="launcher-listing">
-                        <div className="content-scroll">
-                            <div>
-                                <div>
-                                    <span className="section-title">Collections</span>
-                                    <ul>
-                                        <li value="0">
-                                            <div className="cursor elem">
-                                                <div className="cursor-pointer p-2 d-flex align-items-center">
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              ))
+            )}
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default SearchCollections;
